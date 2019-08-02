@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"reflect"
@@ -43,7 +44,7 @@ var (
 )
 
 type someTestClass struct {
-	config Getter
+	config *Configuration
 }
 
 func TestConfig(t *testing.T) {
@@ -75,9 +76,9 @@ func TestConfig(t *testing.T) {
 	}
 	defer configAgent.Stop()
 
-	unitUnderTest = someTestClass{config: configAgent.Config}
+	unitUnderTest = someTestClass{config: configAgent.Config()}
 
-	expected := unitUnderTest.config()
+	expected := unitUnderTest.config
 	result := &Configuration{
 		Secrets: []MirrorConfig{
 			{
@@ -111,8 +112,9 @@ func TestConfig(t *testing.T) {
 
 	err = wait.Poll(1*time.Second, 10*time.Second,
 		func() (bool, error) {
-			expected = unitUnderTest.config()
+			expected = unitUnderTest.config
 			if !reflect.DeepEqual(expected, result) {
+				fmt.Printf("Still mis-match: %s", diff.ObjectReflectDiff(expected, result))
 				return false, nil
 			}
 			return true, nil

@@ -76,7 +76,7 @@ func (o *options) Run() error {
 
 	informerFactory := informers.NewSharedInformerFactory(client, resync)
 
-	secretMirror := controller.NewSecretMirror(informerFactory.Core().V1().Secrets(), client, configAgent.Config)
+	secretMirror := controller.NewSecretMirror(informerFactory.Core().V1().Secrets(), client, configAgent.Config())
 	stop := make(chan struct{})
 	c := make(chan os.Signal, 2)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)

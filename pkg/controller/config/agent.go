@@ -59,6 +59,7 @@ func (ca *Agent) Start(configLocation string) error {
 						logrus.WithField("configLocation", configLocation).
 							WithError(err).Error("Error loading config.")
 					} else {
+						logrus.Infof("=============len(c.Secrets): %d", len(c.Secrets))
 						ca.Set(c)
 					}
 				}
@@ -79,9 +80,6 @@ func (ca *Agent) Stop() {
 		logrus.WithError(err).Error("Error occurred  when  closing watcher.")
 	}
 }
-
-// Getter returns the current Config in a thread-safe manner.
-type Getter func() *Configuration
 
 // Config returns the latest config. Do not modify the config.
 func (ca *Agent) Config() *Configuration {

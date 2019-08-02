@@ -68,7 +68,7 @@ func TestMirrorSecret(t *testing.T) {
 		<-ctx.Done()
 		ca := &config.Agent{}
 		ca.Set(&configuration)
-		c := NewSecretMirror(informer, client, ca.Config)
+		c := NewSecretMirror(informer, client, ca.Config())
 		if tc.shouldErr {
 			client.Fake.PrependReactor(
 				"create", "secrets",

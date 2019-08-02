@@ -34,7 +34,7 @@ const (
 )
 
 // NewSecretMirror returns a new *SecretMirror to generate deletion requests.
-func NewSecretMirror(informer coreinformers.SecretInformer, client kubeclientset.Interface, config config.Getter) *SecretMirror {
+func NewSecretMirror(informer coreinformers.SecretInformer, client kubeclientset.Interface, config *config.Configuration) *SecretMirror {
 	logger := logrus.WithField("controller", secretMirrorname)
 	eventBroadcaster := record.NewBroadcaster()
 	eventBroadcaster.StartLogging(logger.Infof)
@@ -59,7 +59,7 @@ func NewSecretMirror(informer coreinformers.SecretInformer, client kubeclientset
 
 // SecretMirror manages deletion requests for namespaces.
 type SecretMirror struct {
-	config config.Getter
+	config *config.Configuration
 	client kubeclientset.Interface
 
 	lister corelisters.SecretLister
@@ -181,7 +181,7 @@ func (c *SecretMirror) reconcile(key string) error {
 	}
 
 	var mirrorErrors []error
-	for _, mirrorConfig := range c.config().Secrets {
+	for _, mirrorConfig := range c.config.Secrets {
 		if mirrorConfig.From.Namespace == namespace && mirrorConfig.From.Name == name {
 			if err := c.mirrorSecret(source, mirrorConfig.To, logger); err != nil {
 				mirrorErrors = append(mirrorErrors, err)
